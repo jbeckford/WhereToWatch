@@ -1,5 +1,17 @@
 $(function() {
+  var thumbNailHtmlTemplate = detatchThumbNailHtmlTemplate();
+
   subscribeToSubmitEvent();
+
+  function detatchThumbNailHtmlTemplate() {
+    thumbNailHtmlTemplate = $(".thumb").clone();
+    removeThumbNailHtmlTemplate();
+    return thumbNailHtmlTemplate;
+  }
+
+  function removeThumbNailHtmlTemplate() {
+    $(".thumb").remove();
+  }
 
   function subscribeToSubmitEvent(){
     // Use $.on(submit) or $.click to figure out when the user clicks the "submit" button
@@ -9,9 +21,7 @@ $(function() {
   function handleSubmit(){
     // Prevent a form submission using the event.preventDefault() functionUse the $.ready() handler to delay your code from executing until all DOM assets have been loaded
     event.preventDefault();
-
-    var imageId = "Barry";
-    addImage(getNextImageId());    
+    addImage2(getNextImageId());    
   }
 
   function addImage(imageId){
@@ -20,6 +30,21 @@ $(function() {
 
   function getThumbNailContainer(){
     return $("#thumbNailsContainer.row");
+  }
+
+  function getThumbNailsContainerSelector(){
+    return "#thumbNailsContainer";
+  }
+
+  function addImage2(imageId){
+    getThumbNailContainer2(imageId).appendTo(getThumbNailsContainerSelector());
+  }
+
+  function getThumbNailContainer2(imageId){
+    thumbNailContainer = thumbNailHtmlTemplate.clone();
+    thumbNailContainer.attr("id", "imageId");
+    thumbNailContainer.children(0).children(0).attr("src", getImagePathByImageId(imageId));
+    return thumbNailContainer;
   }
 
   function getThumbNailElementHtmlByImageId(imageId){
@@ -45,7 +70,7 @@ $(function() {
   }
 
   var imageIndex = 0;
-  var imageIds = ["AbstractTheArtOfDesign", "AmandaKnox", "AmySchumerTheLeatherSpecial", "ArrestedDevelopment", "AudrieAndDaisy", "Barry", "BillBurrWalkYourWayOut", "BlackMirror", "BloodLine", "BuddyThindersTruck", "CallMeFrancis", "CedricTheEntertainerLiveFromTheVille", "ChefsTableFrance", "ChefsTableNewEpisodes", "ChewingGum", "Cooked", "DanaCarveyStraightWhiteMale60", "FourSeasonsInHavana", "FullerHouse", "GabrielIglesiasImSorryForWhatISaidWhenIWasHungry", "GilmoreGirlsAYearInTheLife", "GraceAndFrankie", "HipHopEvolution", "HouseOfCards", "DontFeelAtHomeAnymore", "JimGaffiganCinco", "KeithRichardsUnderTheInfluence", "LaNina", "LimenySticketsASeriesOfUnfortunateEvents", "Love", "LukeCage", "MakingAMurderer", "MarvelJessicaJones", "MasterOfNone", "MikrBirbigliaThankGodForJokes", "Narcos", "OneDayAtATime", "OrangeIsTheNewBlack", "SantaClaritaDiet", "StrangerThings", "TalesByLight", "Tallulah", "The13th", "TheCrown", "TheCubaLibreStory", "TheDoOver", "TheFundamentalsOfCaring", "TheOA", "TheRanch", "TheWhiteHelmets", "TokyoStories", "TonyRobbinsIAmNotYourGuru", "TrevorNoahAfraidOfTheDark", "UltimateBeastMaster", "UnbreakableKimmySchmidt", "WhatHappenedMissSimone", "WhiteRabbitProject", "WinterOnFireUkrainesFightForFreedom"];
+  var imageIds = ["AbstractTheArtOfDesign", "AmandaKnox", "AmySchumerTheLeatherSpecial", "ArrestedDevelopment", "AudrieAndDaisy", "Barry", "BillBurrWalkYourWayOut", "BlackMirror", "BloodLine", "BuddyThindersTruck", "CallMeFrancis", "CedricTheEntertainerLiveFromTheVille", "ChefsTableFrance", "ChefsTableNewEpisodes", "ChewingGum", "Cooked", "DanaCarveyStraightWhiteMale60", "FourSeasonsInHavana", "FullerHouse", "GabrielIglesiasImSorryForWhatISaidWhenIWasHungry", "GilmoreGirlsAYearInTheLife", "GraceAndFrankie", "HipHopEvolution", "HouseOfCards", "IDontFeelAtHomeAnymore", "JimGaffiganCinco", "KeithRichardsUnderTheInfluence", "LaNina", "LimenySticketsASeriesOfUnfortunateEvents", "Love", "LukeCage", "MakingAMurderer", "MarvelJessicaJones", "MasterOfNone", "MikrBirbigliaThankGodForJokes", "Narcos", "OneDayAtATime", "OrangeIsTheNewBlack", "SantaClaritaDiet", "StrangerThings", "TalesByLight", "Tallulah", "The13th", "TheCrown", "TheCubaLibreStory", "TheDoOver", "TheFundamentalsOfCaring", "TheOA", "TheRanch", "TheWhiteHelmets", "TokyoStories", "TonyRobbinsIAmNotYourGuru", "TrevorNoahAfraidOfTheDark", "UltimateBeastMaster", "UnbreakableKimmySchmidt", "WhatHappenedMissSimone", "WhiteRabbitProject", "WinterOnFireUkrainesFightForFreedom"];
 
 
   function getImagePathByImageId(imageId){
