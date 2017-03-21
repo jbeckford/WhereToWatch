@@ -39,7 +39,9 @@ $(function() {
   }
 
   function getSearchTerm(){
-    return $("#searchTerm").val();
+    var searchTerm = $("#searchTerm").val();
+    var x = searchTerm.replace(" ","");
+    return x;
   }
 
   function addImage(imageId){
@@ -63,7 +65,7 @@ $(function() {
   function searchForMovies(moviesSearchTerm){
     var foundMovies = [];
 
-    var pattern = new RegExp(moviesSearchTerm);
+    var pattern = new RegExp(moviesSearchTerm, "i");
 
     for(imageIdIndex = 0; imageIdIndex < imageIds.length; imageIdIndex++) {
       if(pattern.test(imageIds[imageIdIndex])){
