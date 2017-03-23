@@ -98,6 +98,8 @@ $(function() {
   }
 
   function findAndDisplayMovies2(videoProviders, moviesSearchTerm){
+    clearImages();
+
     var videosMap = new Object();
 
     for (var videoProviderIndex = 0; videoProviderIndex < videoProviders.length; videoProviderIndex++){
