@@ -2,19 +2,34 @@ $(function() {
   var imageIndex = 0;
   var imageIds = ["AbstractTheArtOfDesign", "AmandaKnox", "AmySchumerTheLeatherSpecial", "ArrestedDevelopment", "AudrieAndDaisy", "Barry", "BillBurrWalkYourWayOut", "BlackMirror", "BloodLine", "BuddyThindersTruck", "CallMeFrancis", "CedricTheEntertainerLiveFromTheVille", "ChefsTableFrance", "ChefsTableNewEpisodes", "ChewingGum", "Cooked", "DanaCarveyStraightWhiteMale60", "FourSeasonsInHavana", "FullerHouse", "GabrielIglesiasImSorryForWhatISaidWhenIWasHungry", "GilmoreGirlsAYearInTheLife", "GraceAndFrankie", "HipHopEvolution", "HouseOfCards", "IDontFeelAtHomeAnymore", "JimGaffiganCinco", "KeithRichardsUnderTheInfluence", "LaNina", "LimenySticketsASeriesOfUnfortunateEvents", "Love", "LukeCage", "MakingAMurderer", "MarvelJessicaJones", "MasterOfNone", "MikrBirbigliaThankGodForJokes", "Narcos", "OneDayAtATime", "OrangeIsTheNewBlack", "SantaClaritaDiet", "StrangerThings", "TalesByLight", "Tallulah", "The13th", "TheCrown", "TheCubaLibreStory", "TheDoOver", "TheFundamentalsOfCaring", "TheOA", "TheRanch", "TheWhiteHelmets", "TokyoStories", "TonyRobbinsIAmNotYourGuru", "TrevorNoahAfraidOfTheDark", "UltimateBeastMaster", "UnbreakableKimmySchmidt", "WhatHappenedMissSimone", "WhiteRabbitProject", "WinterOnFireUkrainesFightForFreedom"];
   var thumbNailHtmlTemplate = detatchThumbNailHtmlTemplate();
+  // var providerHtmlTemplate = detatchProviderHtmlTemplate();
   var userVideoProviders = getVideoProviders();
   subscribeToSearchTermChangedEvent();
   subscribeToSubmitEvent();
   filterMovies();
 
   function detatchThumbNailHtmlTemplate() {
-    thumbNailHtmlTemplate = $(".thumb").clone();
+    var thumbNailHtmlTemplate = $(".thumb").clone();
     removeThumbNailHtmlTemplate();
     return thumbNailHtmlTemplate;
   }
 
   function removeThumbNailHtmlTemplate() {
     $(".thumb").remove();
+  }
+
+  function detatchProviderHtmlTemplate() {
+    providerHtmlTemplate = $(getProviderHtmlTemplateClassName()).clone();
+    removeProviderHtmlTemplate();
+    return providerHtmlTemplate;
+  }
+
+  function removeProviderHtmlTemplate() {
+    $(getProviderHtmlTemplateClassName()).remove();
+  }
+
+  function getProviderHtmlTemplateClassName(){
+    return ".providerContainer";
   }
 
   function subscribeToSearchTermChangedEvent(){
@@ -246,6 +261,10 @@ $(function() {
     if (a.month < b.month) return -1;
     if (a.month > b.month) return 1;
     return 0;
+  }
+
+  function filterVideosByProvider(providerName){
+    $("." + providerName).hide();
   }
 
 });
