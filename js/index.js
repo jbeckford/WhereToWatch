@@ -2,10 +2,16 @@ $(function() {
   var imageIndex = 0;
   var imageIds = ["AbstractTheArtOfDesign", "AmandaKnox", "AmySchumerTheLeatherSpecial", "ArrestedDevelopment", "AudrieAndDaisy", "Barry", "BillBurrWalkYourWayOut", "BlackMirror", "BloodLine", "BuddyThindersTruck", "CallMeFrancis", "CedricTheEntertainerLiveFromTheVille", "ChefsTableFrance", "ChefsTableNewEpisodes", "ChewingGum", "Cooked", "DanaCarveyStraightWhiteMale60", "FourSeasonsInHavana", "FullerHouse", "GabrielIglesiasImSorryForWhatISaidWhenIWasHungry", "GilmoreGirlsAYearInTheLife", "GraceAndFrankie", "HipHopEvolution", "HouseOfCards", "IDontFeelAtHomeAnymore", "JimGaffiganCinco", "KeithRichardsUnderTheInfluence", "LaNina", "LimenySticketsASeriesOfUnfortunateEvents", "Love", "LukeCage", "MakingAMurderer", "MarvelJessicaJones", "MasterOfNone", "MikrBirbigliaThankGodForJokes", "Narcos", "OneDayAtATime", "OrangeIsTheNewBlack", "SantaClaritaDiet", "StrangerThings", "TalesByLight", "Tallulah", "The13th", "TheCrown", "TheCubaLibreStory", "TheDoOver", "TheFundamentalsOfCaring", "TheOA", "TheRanch", "TheWhiteHelmets", "TokyoStories", "TonyRobbinsIAmNotYourGuru", "TrevorNoahAfraidOfTheDark", "UltimateBeastMaster", "UnbreakableKimmySchmidt", "WhatHappenedMissSimone", "WhiteRabbitProject", "WinterOnFireUkrainesFightForFreedom"];
   var thumbNailHtmlTemplate = detatchThumbNailHtmlTemplate();
-  // var providerHtmlTemplate = detatchProviderHtmlTemplate();
+  var videoProviderFilterContainerTemplate =  detatchVideoProviderFilterContainerTemplate();
+   // var providerHtmlTemplate = detatchProviderHtmlTemplate();
   var userVideoProviders = getVideoProviders();
   subscribeToSearchTermChangedEvent();
   subscribeToSubmitEvent();
+  for(var userVideoProviderIndex = 0; userVideoProviderIndex < userVideoProviders.length; userVideoProviderIndex++){
+    var userVideoProvider = userVideoProviders[userVideoProviderIndex];
+    addVideoProviderFilter(userVideoProvider.providerName);
+  }
+
   filterMovies();
 
   function detatchThumbNailHtmlTemplate() {
@@ -31,6 +37,60 @@ $(function() {
   function getProviderHtmlTemplateClassName(){
     return ".providerContainer";
   }
+
+  function detatchVideoProviderFilterContainerTemplate() {
+    var videoProviderFilterContainerTemplates = $(getVideoProviderFilterContainerClassSelector());
+    var videoProviderFilterContainerTemplate = videoProviderFilterContainerTemplates.clone();
+    removeVideoProviderFilterContainerTemplate();
+    return videoProviderFilterContainerTemplate;
+  }
+
+  function removeVideoProviderFilterContainerTemplate() {
+    $(getVideoProviderFilterContainerClassSelector()).remove();
+  }
+
+  function addVideoProviderFilter(videoProviderName){
+    createVideoProviderFilterContainer(videoProviderName).appendTo(getVideoProviderFiltersContainerSelector());
+  }
+
+  function createVideoProviderFilterContainer(videoProviderName) {
+    var videoProviderFilterContainer = videoProviderFilterContainerTemplate.clone();
+    var foo = videoProviderFilterContainerTemplate.clone();
+    // videoProviderFilterContainer.attr("id", getVideoProviderId(videoProviderName));
+    var videoProviderFilter = videoProviderFilterContainer.children(0);
+    videoProviderFilter.html(getVideoProviderNameHtml(videoProviderName));
+    videoProviderFilter.attr("id", getVideoProviderId(videoProviderName));
+    return videoProviderFilterContainer;
+  }
+
+  function getVideoProviderNameHtml(videoProviderName){
+    return "<input type=\"checkbox\" value=\"\" checked>" + videoProviderName;
+  }
+
+  function getVideoProviderId(videoProviderName){
+    return getVideoProviderIdPrefix() + videoProviderName;
+  }
+
+  function getVideoProviderName(videoProviderId){
+    VideoProviderId.substring(getVideoProviderIdPrefix().length, videoProviderId.length);
+  }
+
+  function getVideoProviderIdPrefix(){
+    return "videoProvider_";
+  }
+
+  function getVideoProviderFiltersContainerSelector(){
+    return "#videoProviderFilters";
+  }
+
+  function getVideoProviderFilterContainerClassSelector() {
+    return "." + getVideoProviderFilterContainerClassName();
+  }
+
+  function getVideoProviderFilterContainerClassName() {
+    return "videoProviderFilter";
+  }
+
 
   function subscribeToSearchTermChangedEvent(){
     // Use $.on(submit) or $.click to figure out when the user clicks the "submit" button
