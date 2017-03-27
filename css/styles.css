@@ -6,7 +6,7 @@ html{
   color: green;
 }
 
-.videoProviderFilter {
+.videoProviderFilterContainer {
     color: orange;
     position: relative;
     /*display: block;*/

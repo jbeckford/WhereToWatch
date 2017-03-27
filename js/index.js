@@ -1,6 +1,4 @@
 $(function() {
-  var imageIndex = 0;
-  var imageIds = ["AbstractTheArtOfDesign", "AmandaKnox", "AmySchumerTheLeatherSpecial", "ArrestedDevelopment", "AudrieAndDaisy", "Barry", "BillBurrWalkYourWayOut", "BlackMirror", "BloodLine", "BuddyThindersTruck", "CallMeFrancis", "CedricTheEntertainerLiveFromTheVille", "ChefsTableFrance", "ChefsTableNewEpisodes", "ChewingGum", "Cooked", "DanaCarveyStraightWhiteMale60", "FourSeasonsInHavana", "FullerHouse", "GabrielIglesiasImSorryForWhatISaidWhenIWasHungry", "GilmoreGirlsAYearInTheLife", "GraceAndFrankie", "HipHopEvolution", "HouseOfCards", "IDontFeelAtHomeAnymore", "JimGaffiganCinco", "KeithRichardsUnderTheInfluence", "LaNina", "LimenySticketsASeriesOfUnfortunateEvents", "Love", "LukeCage", "MakingAMurderer", "MarvelJessicaJones", "MasterOfNone", "MikrBirbigliaThankGodForJokes", "Narcos", "OneDayAtATime", "OrangeIsTheNewBlack", "SantaClaritaDiet", "StrangerThings", "TalesByLight", "Tallulah", "The13th", "TheCrown", "TheCubaLibreStory", "TheDoOver", "TheFundamentalsOfCaring", "TheOA", "TheRanch", "TheWhiteHelmets", "TokyoStories", "TonyRobbinsIAmNotYourGuru", "TrevorNoahAfraidOfTheDark", "UltimateBeastMaster", "UnbreakableKimmySchmidt", "WhatHappenedMissSimone", "WhiteRabbitProject", "WinterOnFireUkrainesFightForFreedom"];
   var thumbNailHtmlTemplate = detatchThumbNailHtmlTemplate();
   var videoProviderFilterContainerTemplate =  detatchVideoProviderFilterContainerTemplate();
    // var providerHtmlTemplate = detatchProviderHtmlTemplate();
@@ -12,7 +10,17 @@ $(function() {
     addVideoProviderFilter(userVideoProvider.providerName);
   }
 
+  subscribeToVideoProviderFilterControlChanges();
+
   filterMovies();
+
+  function subscribeToVideoProviderFilterControlChanges(){
+    $(getVideoProviderFilterControlClassName()).change(handleVideoProviderFilterControlChange);
+  }
+
+  function handleVideoProviderFilterControlChange(){
+    filterMovies();
+  }
 
   function detatchThumbNailHtmlTemplate() {
     var thumbNailHtmlTemplate = $(".thumb").clone();
@@ -60,6 +68,7 @@ $(function() {
     var videoProviderFilter = videoProviderFilterContainer.children(0);
     videoProviderFilter.html(getVideoProviderNameHtml(videoProviderName));
     videoProviderFilter.attr("id", getVideoProviderId(videoProviderName));
+    videoProviderFilter.addClass(getVideoProviderFilterControlClassName());
     return videoProviderFilterContainer;
   }
 
@@ -75,12 +84,20 @@ $(function() {
     VideoProviderId.substring(getVideoProviderIdPrefix().length, videoProviderId.length);
   }
 
+  function getVideoProviderFilterControlClassSelector(){
+    return "." + getVideoProviderFilterControlClassName();
+  }
+
+  function getVideoProviderFilterControlClassName(){
+    return "videoProviderFilter";
+  }
+
   function getVideoProviderIdPrefix(){
     return "videoProvider_";
   }
 
   function getVideoProviderFiltersContainerSelector(){
-    return "#videoProviderFilters";
+    return "#videoProviderFilterContainers";
   }
 
   function getVideoProviderFilterContainerClassSelector() {
@@ -88,7 +105,7 @@ $(function() {
   }
 
   function getVideoProviderFilterContainerClassName() {
-    return "videoProviderFilter";
+    return "videoProviderFilterContainer";
   }
 
 
@@ -124,10 +141,6 @@ $(function() {
     return searchTermWithoutSpaces;
   }
 
-  function addImage(imageId){
-    getThumbNailContainer().append(getThumbNailElementHtml(imageId));
-  }
-
   function getThumbNailContainer(){
     return $("#thumbNailsContainer.row");
   }
@@ -136,81 +149,50 @@ $(function() {
     return "#thumbNailsContainer";
   }
 
-  function findAndDisplayMovies(moviesSearchTerm){
-    var foundMovies = searchForMovies(moviesSearchTerm);
-    clearImages();
-    addImages(foundMovies);
-  }
-
-  function searchForMovies(moviesSearchTerm){
-    var foundMovies = [];
-
-    var pattern = new RegExp(moviesSearchTerm, "i");
-
-    for(imageIdIndex = 0; imageIdIndex < imageIds.length; imageIdIndex++) {
-      if(pattern.test(imageIds[imageIdIndex])){
-        foundMovies.push(imageIds[imageIdIndex]);
-      }
-    }
-    return foundMovies;
-  }
-
-  function simulateSearch(moviesSearchTerm) {
-    var foundMovies = [];
-    startingIndex = Math.floor((Math.random() * imageIds.length)); 
-
-    for(i = 0; i < 10; i++){
-      foundMovies[i] = imageIds[(startingIndex + i) % imageIds.length];
-    }
-
-    return foundMovies;
-  }
-
-  function addImages(images){
-    for(imageIndex = 0; imageIndex < images.length; imageIndex++){
-      addImage2(images[imageIndex]);
-    }
-  }
-
   function findAndDisplayMovies2(videoProviders, moviesSearchTerm){
     clearImages();
 
-    var videosMap = new Object();
-
     for (var videoProviderIndex = 0; videoProviderIndex < videoProviders.length; videoProviderIndex++){
       var videoProvider = videoProviders[videoProviderIndex];
-      var videoIds = videoProvider.findVideos(moviesSearchTerm);
+      var foundVideos = videoProvider.findVideos(moviesSearchTerm);
 
-      for(var videoIdIndex = 0; videoIdIndex < videoIds.length; videoIdIndex++){
-        var videoProvidersMap = videosMap[videoIds[videoIdIndex]];
+      // for(var videoIdIndex = 0; videoIdIndex < videoIds.length; videoIdIndex++){
+      //   var videoProvidersMap = videosMap[videoIds[videoIdIndex]];
 
-        if (!videosMap.hasOwnProperty(videoIds[videoIdIndex]))
-        {
-          videoProvidersMap = new Object();
-          videosMap[videoIds[videoIdIndex]] = videoProvidersMap;
-        }
+      //   if (!videosMap.hasOwnProperty(videoIds[videoIdIndex]))
+      //   {
+      //     videoProvidersMap = new Object();
+      //     videosMap[videoIds[videoIdIndex]] = videoProvidersMap;
+      //   }
 
-        videoProvidersMap[videoProvider.providerName] = videoProvider;
-      }
-    }
-
-    addImagesFromMap(videosMap);
-  }
-
-  function addImagesFromMap(videosMap){
-    for(var videoName in videosMap){
-      addImageFromMap(videoName, videosMap[videoName]);
+      //   videoProvidersMap[videoProvider.providerName] = videoProvider;
+      // }
+      addImages(videoProvider, foundVideos);
     }
   }
 
-  function addImageFromMap(videoName, videoProviders){
-    var thumbNailContainer = getThumbNailContainer2(videoName);
-    
-    for(var providerName in videoProviders){
-      thumbNailContainer.addClass(getVideoProviderClassName(providerName));
+  function addImages(videoProvider, videoNames){
+    for(var videoIndex = 0; videoIndex < videoNames.length; videoIndex++){
+      addImage(videoProvider, videoNames[videoIndex]);
     }
+  }
 
+  function addImage(videoProvider, videoName){
+    var thumbNailContainer = getThumbNailContainer(videoProvider.providerName, videoName);
     thumbNailContainer.appendTo(getThumbNailsContainerSelector());
+  }
+
+  function getThumbNailContainer(videoProviderName, imageId){
+    thumbNailContainer = thumbNailHtmlTemplate.clone();
+    thumbNailContainer.attr("id", "imageId");
+    thumbNailContainer.children(0).children(0).attr("src", getImagePath(videoProviderName, imageId));
+    thumbNailContainer.addClass(getImageClassName());
+    thumbNailContainer.addClass(getVideoProviderClassName(videoProviderName));
+    return thumbNailContainer;
+  }
+
+  function getImagePath(videoProviderName, imageId){
+    return "images/moviesArt/" + videoProviderName + "/"+ imageId + ".jpg";
   }
 
   function getVideoProviderClassName(providerName){
@@ -220,10 +202,13 @@ $(function() {
 
   function getVideoProviders(){
     var videoProviders = [];
-    videoProviders.push(new VideoProvider("Amazon", "Amazon.jpg", imageIds));
-    videoProviders.push(new VideoProvider("Netflix", "Netflix.jpg", imageIds));
-    videoProviders.push(new VideoProvider("Xfinity", "Xfinity", imageIds));
-    videoProviders.push(new VideoProvider("Hulu", "Hulu", imageIds));
+    var netflixVideos = ["AbstractTheArtOfDesign", "AmandaKnox", "AmySchumerTheLeatherSpecial", "ArrestedDevelopment", "AudrieAndDaisy", "Barry", "BillBurrWalkYourWayOut", "BlackMirror", "BloodLine", "BuddyThindersTruck", "CallMeFrancis", "CedricTheEntertainerLiveFromTheVille", "ChefsTableFrance", "ChefsTableNewEpisodes", "ChewingGum", "Cooked", "DanaCarveyStraightWhiteMale60", "FourSeasonsInHavana", "FullerHouse", "GabrielIglesiasImSorryForWhatISaidWhenIWasHungry", "GilmoreGirlsAYearInTheLife", "GraceAndFrankie", "HipHopEvolution", "HouseOfCards", "IDontFeelAtHomeAnymore", "JimGaffiganCinco", "KeithRichardsUnderTheInfluence", "LaNina", "LimenySticketsASeriesOfUnfortunateEvents", "Love", "LukeCage", "MakingAMurderer", "MarvelJessicaJones", "MasterOfNone", "MikrBirbigliaThankGodForJokes", "Narcos", "OneDayAtATime", "OrangeIsTheNewBlack", "SantaClaritaDiet", "StrangerThings", "TalesByLight", "Tallulah", "The13th", "TheCrown", "TheCubaLibreStory", "TheDoOver", "TheFundamentalsOfCaring", "TheOA", "TheRanch", "TheWhiteHelmets", "TokyoStories", "TonyRobbinsIAmNotYourGuru", "TrevorNoahAfraidOfTheDark", "UltimateBeastMaster", "UnbreakableKimmySchmidt", "WhatHappenedMissSimone", "WhiteRabbitProject", "WinterOnFireUkrainesFightForFreedom"];
+    var xfinityVideos = ["10CloverFieldLane", "Allied", "Arrival", "AssassinsCreed", "BeautyAndTheBeast", "CaptainFantastic", "DoctorStrange", "FantasticBeasts", "Fences", "Frozen", "HacksawRidge", "Jackie", "JasonBourne", "JohnWayne", "Moana", "Moonlight", "NineLives", "Passengers", "Pets", "RiseUp", "Sicario", "Sing", "Split", "Storks", "TheDressMaker", "TheGirlWithAllTheGifts", "TheSpongeBobMovie", "Trolls", "XmenApocalypse"];
+    var amazonVideos = ["13Hours", "Anthropoid", "BattleFieldSevastapol", "CreaturesOfTheDeepSea", "Creed", "DaddysHome", "DirtyGranpa", "Emma", "EverythingAndNothing", "GangsOfNewYork", "GhostRecon", "HappyFeet", "Hook", "HotPursuit", "IndianaJonesAndTheLastCrusade", "IndianaJonesAndTheTempleOfDoom", "IndianaJonesRaidersOfTheLostArk", "IndianJonesAndTheKingdomOfTheCrystalSkull", "Interstellar", "IntoTheWild", "IronMan", "KnightTimeTerror", "MarginCall", "MissionImpossibleRogueNation", "MisYouAlready", "MrChurch", "NineLives", "NormOfTheNorth", "Room", "SaintsAndSoldiers", "Spectre", "SwissArmyMan", "TerminatorGenisys", "TheAgeOfAdaline", "TheBoondockSaints", "TheChoice", "TheDinosaurProject", "TheDressmaker", "TheEscort", "TheGutOurSecondBrain", "TheHungerGamesMockingJay", "TheInfiltrator", "TheManInTheHighCastle", "TheSeaOfTrees", "TheSpyNextDoor", "TheSubstitute", "TheWords", "WhatWeDoInTheShadows", "WhereToInvadeNext", "WhiskeyTangoFoxtrot", "WhoGetsTheDog", "WildBill", "WillieWonkaAndTheChocolateFactory", "Zoolander"];
+
+    videoProviders.push(new VideoProvider("Amazon", "Amazon.jpg", amazonVideos));
+    videoProviders.push(new VideoProvider("Netflix", "Netflix.jpg", netflixVideos));
+    videoProviders.push(new VideoProvider("Xfinity", "Xfinity", xfinityVideos));
     return videoProviders;
   }
 
@@ -235,29 +220,14 @@ $(function() {
       var foundMovies = [];
 
       var pattern = new RegExp(moviesSearchTerm, "i");
-      var thisProviderVideoPattern = new RegExp(this.providerName.charAt(0), "i");
 
-      for(imageIdIndex = 0; imageIdIndex < imageIds.length; imageIdIndex++) {
-        if(thisProviderVideoPattern.test(this.videos[imageIdIndex]) && pattern.test(imageIds[imageIdIndex])){
-          foundMovies.push(this.videos[imageIdIndex]);
+      for(var videoIndex = 0; videoIndex < this.videos.length; videoIndex++) {
+        if(pattern.test(this.videos[videoIndex])){
+          foundMovies.push(this.videos[videoIndex]);
         }
       }
       return foundMovies;
     };
-  }
-
-  function removeImage(imageId){
-    $(getImageIdSelector(imageId)).remove();
-  }
-
-  function getImageIdSelector(imageId){
-    return "#" + imageId;
-  }
-
-  function removeImages(images){
-    for(imageIndex = 0; imageIndex < images.length; imageIndex++){
-      removeImage(images[imageIndex]);
-    }
   }
 
   function clearImages() {
@@ -266,61 +236,11 @@ $(function() {
   }
 
   function getImageClassSelector(){
-    return ".whereToWatchImage";
+    return "." + getImageClassName();
   }
 
-  function addImage2(imageId){
-    getThumbNailContainer2(imageId).appendTo(getThumbNailsContainerSelector());
-  }
-
-  function getThumbNailContainer2(imageId){
-    thumbNailContainer = thumbNailHtmlTemplate.clone();
-    thumbNailContainer.attr("id", "imageId");
-    thumbNailContainer.children(0).children(0).attr("src", getImagePathByImageId(imageId));
-    thumbNailContainer.addClass(getImageClassSelector());
-    return thumbNailContainer;
-  }
-
-  function getThumbNailElementHtmlByImageId(imageId){
-    return "<div class=\"col-lg-3 col-md-4 col-xs-6 thumb\">" +
-           "<a class=\"thumbnail\" href=\"#\">" + 
-           "<img class=\"img-responsive\" " +
-           "src=\"smiley.gif\" alt=\"\" " +
-           "</a>" +
-           "</div>";
-  }
-
-  function getThumbNailElementHtml(imageId){
-    return "<div class=\"col-lg-3 col-md-4 col-xs-6 thumb\">" +
-           "<a class=\"thumbnail\" href=\"#\">" + 
-           "<img class=\"img-responsive\" " + 
-           "src=\"" + 
-           getImagePathByImageId(imageId) + 
-           "\" alt=\"\"" +
-           // "style=\"width:400px;height:300px;border:0\"" + 
-           ">" + 
-           "</a>" +
-           "</div>";
-  }
-
-  function getImagePathByImageId(imageId){
-    return "images/moviesArt/" + imageId + ".jpg";
-  }
-
-  function getNextImageId(){
-    if(imageIndex >= imageIds.length){
-      imageIndex = 0;
-    }
-
-    var imageId = imageIds[imageIndex];
-    imageIndex = imageIndex + 1;
-    return imageId;
-  }
-
-  function monthSorter(a, b) {
-    if (a.month < b.month) return -1;
-    if (a.month > b.month) return 1;
-    return 0;
+  function getImageClassName(){
+    return "whereToWatchImage"; 
   }
 
   function filterVideosByProvider(providerName){
