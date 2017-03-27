@@ -3,6 +3,7 @@ $(function() {
   var videoProviderFilterContainerTemplate =  detatchVideoProviderFilterContainerTemplate();
    // var providerHtmlTemplate = detatchProviderHtmlTemplate();
   var userVideoProviders = getVideoProviders();
+  var shouldShowVideoProvider = {};
   subscribeToSearchTermChangedEvent();
   subscribeToSubmitEvent();
   for(var userVideoProviderIndex = 0; userVideoProviderIndex < userVideoProviders.length; userVideoProviderIndex++){
@@ -15,11 +16,13 @@ $(function() {
   filterMovies();
 
   function subscribeToVideoProviderFilterControlChanges(){
-    $(getVideoProviderFilterControlClassName()).change(handleVideoProviderFilterControlChange);
+    $(getVideoProviderFilterControlClassSelector()).change(handleVideoProviderFilterControlChange);
   }
 
   function handleVideoProviderFilterControlChange(){
-    filterMovies();
+    var providerName = getVideoProviderName($(this).attr("id"));
+    shouldShowVideoProvider[providerName] = !shouldShowVideoProvider[providerName];
+    filterVideosByProvider(providerName, shouldShowVideoProvider[providerName]);
   }
 
   function detatchThumbNailHtmlTemplate() {
@@ -69,6 +72,7 @@ $(function() {
     videoProviderFilter.html(getVideoProviderNameHtml(videoProviderName));
     videoProviderFilter.attr("id", getVideoProviderId(videoProviderName));
     videoProviderFilter.addClass(getVideoProviderFilterControlClassName());
+    shouldShowVideoProvider[videoProviderName] = true;
     return videoProviderFilterContainer;
   }
 
@@ -81,7 +85,7 @@ $(function() {
   }
 
   function getVideoProviderName(videoProviderId){
-    VideoProviderId.substring(getVideoProviderIdPrefix().length, videoProviderId.length);
+    return videoProviderId.substring(getVideoProviderIdPrefix().length, videoProviderId.length);
   }
 
   function getVideoProviderFilterControlClassSelector(){
@@ -243,8 +247,12 @@ $(function() {
     return "whereToWatchImage"; 
   }
 
-  function filterVideosByProvider(providerName){
-    $("." + providerName).hide();
+  function filterVideosByProvider(providerName, shouldDisplay){
+    if(shouldDisplay){
+      $("." + providerName).show(1000);
+    } else {
+      $("." + providerName).hide(1000);
+    }
   }
 
 });
